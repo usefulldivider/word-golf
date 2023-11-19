@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+
+</head>
+<body>
+    <!-- pic, blinkin -->
+    <div id="tut">
+        <img src="touch.png" alt="how to touch type">
+        <h2>Type your way to the end!!</h2>
+        <h2 id="blinkText">Press Enter to start</h2>
+    </div>
+
+    <script>
+        const popup = document.getElementById('tut');
+        const blinkText = document.getElementById('blinkText');
+        let blinkInterval;
+        let colorInterval;
+
+        function hidePopup() {
+            popup.style.display = 'none';
+        }
+
+        // function gencolor() {
+        //     const r = Math.floor(Math.random() * 128);
+        //     const g = Math.floor(Math.random() * 128);
+        //     const b = Math.floor(Math.random() * 128);
+        //     const randomColor = `rgb(${r},${g},${b}`;
+        //     popup.style.backgroundColor = randomColor;
+        // }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                $(popup).fadeOut("slow", hidePopup);
+                clearInterval(blinkInterval);
+                // clearInterval(colorInterval);
+            }
+
+            
+        });
+
+        popup.style.display = 'block';
+
+        blinkInterval = setInterval(() => {
+            if (blinkText.style.visibility === 'hidden') {
+                blinkText.style.visibility = 'visible';
+            } else {
+                blinkText.style.visibility = 'hidden';
+            }
+        }, 500); 
+
+        // colorInterval = setInterval(gencolor, 2000); 
+    </script>
+
+
+ <!-- <div id="include-content"></div> -->
+ <!-- canvas -->
+ <canvas id="c1">
+ </canvas>
+ <!-- letter spawn -->
+ <script type="text/javascript" src="spawn_log.js">
+ </script>
+
+
+ <!-- timer -->
+ <div id="timediv"></div>
+ <script type="text/babel">
+     class Timer extends React.Component {
+constructor(props) {
+ super(props);
+ this.state = {
+   seconds: 0,
+   intervalId: null // Initialize intervalId in the component's state
+ };
+}
+
+componentDidMount() {
+  const intervalId = setInterval(() => {
+    this.setState(prevState => ({
+      seconds: prevState.seconds + 1
+    }));
+
+    gameStats.time = this.state.seconds + 1; // Update gameStats.time
+  }, 1000);
+
+  this.setState({ intervalId });
+}
+componentWillUnmount() {
+ clearInterval(this.state.intervalId); // Clear interval using the stored ID
+}
+
+render() {
+ const timestyle = {
+   color: 'white',
+   fontSize: '50px',
+   opacity:0.5
+ };
+ return (
+   <div>
+     <h1 style={timestyle}>time:{this.state.seconds}</h1>
+   </div>
+ );
+}
+}
+
+
+     
+
+     function startTimer() {
+         ReactDOM.render(<Timer />, document.getElementById('timediv'));
+}
+     function stopTimer() {
+         const container = document.getElementById('timediv');
+         ReactDOM.unmountComponentAtNode(container); // Unmount the Timer component
+}
+ </script>
+ <!-- points -->
+<div id="pointsdiv"></div>
+
+<script type="text/babel">
+    // Define a global variable to hold the Points component instance
+    let pointsComponent;
+  
+    class Points extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          points: 0,
+        };
+      }
+  
+      incrementPoints = () => {
+        this.setState((prevState) => ({
+          points: prevState.points + 10,
+        }));
+        gameStats.points += 10; 
+      };
+  
+      render() {
+        const pointstyle = {
+          color: 'white',
+          fontSize: '50px',
+          opacity:0.5
+        };
+        return (
+          <div>
+            <h1 style={pointstyle}>points: {this.state.points}</h1>
+          </div>
+        );
+      }
+    }
+  
+    function pointson() {
+      const container = document.getElementById('pointsdiv');
+      pointsComponent = ReactDOM.render(<Points />, container);
+    }
+  
+    function stopPoints() {
+      const container = document.getElementById('pointsdiv');
+      ReactDOM.unmountComponentAtNode(container);
+    }
+  
+    document.addEventListener('incrementPoints', () => {
+      if (pointsComponent) {
+        pointsComponent.incrementPoints();
+      }
+    });
+  </script>
+
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <span id="time"></span>
+      <span id="points"></span>
+      <h2>For every second you lose 2 points</h2>
+      <h2>For every letter you gain 10 points</h2>
+
+      <div class="buttons">
+        <button id="restart-button">Restart</button>
+        <button id="leaderboard-button">add to Leaderboard</button>
+      </div>
+      <button id="close-popup-button">Close</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const showPopupButton = document.getElementById('show-popup-button');
+      const popup = document.getElementById('popup');
+      const closePopupButton = document.getElementById('close-popup-button');
+      const restartbutton= document.getElementById('restart-button');
+      const Leaderboard = document.getElementById('leaderboard-button');
+
+
+      // showPopupButton.addEventListener('click', function () {
+      //   popup.style.display = 'block';
+      // });
+
+      Leaderboard.addEventListener('click',function(){
+        window.location.href = 'https://en.wikipedia.org/wiki/Leaderboard'
+      })
+      restartbutton.addEventListener('click', function () {
+        location.reload();
+        
+      });
+      closePopupButton.addEventListener('click', function () {
+        window.close();
+        // Redirect to another page
+  // window.location.href = 'https://www.example.com';
+        
+      });
+    });
+    function openPopup() {
+  const popup = document.getElementById('popup');
+  const timeSpan = document.getElementById('time');
+  const pointsSpan = document.getElementById('points');
+
+  timeSpan.innerText = `Time: ${gameStats.time}`;
+  pointsSpan.innerText = `Points: ${gameStats.points-gameStats.time*2}`;
+  
+  popup.style.display = 'block';
+}
+  </script>
+  
+
+</body>
+</html>
+
+
+
+<!-- closePopupButton.addEventListener('click', function () {
+  // Redirect to another page
+  window.location.href = 'https://www.example.com'; // Replace with your desired URL
+}); -->
